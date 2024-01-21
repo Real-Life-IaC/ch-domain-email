@@ -30,8 +30,8 @@ class B1PublicHostedZone(Construct):
         )
 
         # Create the SSL certificate for the hosted zone
-        # Private hosted zones are not accessible from the internet
-        # so we need to use email validation instead of DNS
+        # It will automatically validate by adding a
+        # CNAME record to the public hosted zone
         self.certificate = acm.Certificate(
             scope=self,
             id="Certificate",
@@ -82,7 +82,7 @@ class B1PrivateHostedZone(Construct):
         scope: Construct,
         id: str,
         zone_name: str,
-        vpc: ec2.Vpc,
+        vpc: ec2.IVpc,
         **kwargs,
     ) -> None:
         super().__init__(scope, id, **kwargs)

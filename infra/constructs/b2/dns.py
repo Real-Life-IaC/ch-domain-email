@@ -1,9 +1,8 @@
 from enum import StrEnum
 
-from aws_cdk import aws_ssm as ssm
 from aws_cdk import aws_ec2 as ec2
+from aws_cdk import aws_ssm as ssm
 from constructs import Construct
-from constructs_package.constants import AwsStage
 from infra.constructs.b1.dns import B1PrivateHostedZone
 from infra.constructs.b1.dns import B1PublicHostedZone
 
@@ -46,20 +45,18 @@ class B2PrivateHostedZones(Construct):
     ) -> None:
         super().__init__(scope, id)
 
-        vpc_id = ssm.StringParameter.value_from_lookup(
+        stage = ssm.StringParameter.value_from_lookup(
             scope=self,
-            parameter_name="/platform/vpc/id",
-        )
-
-        vpc_id = ssm.StringParameter.value_from_lookup(
-            scope=self,
-            parameter_name="/platform/vpc/id",
+            parameter_name="/platform/stage",
         )
 
         vpc = ec2.Vpc.from_lookup(
             scope=self,
             id="Vpc",
-            vpc_id=vpc_id,
+            vpc_id=ssm.StringParameter.value_from_lookup(
+                scope=self,
+                parameter_name="/platform/vpc/id",
+            ),
         )
 
         # Create a private hosted zone for <stage>.real-life-iac.com

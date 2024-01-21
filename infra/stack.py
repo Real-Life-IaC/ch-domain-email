@@ -7,7 +7,7 @@ from infra.constructs.b2.email import B2EmailServices
 
 
 class DomainEmailStack(cdk.Stack):
-    """Create the AWS foundational resources for the Production stage"""
+    """Route53 and SES resources"""
 
     def __init__(
         self,
