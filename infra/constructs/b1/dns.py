@@ -37,7 +37,8 @@ class B1PublicHostedZone(Construct):
         self.certificate = acm.Certificate(
             scope=self,
             id="Certificate",
-            domain_name=f"*.{zone_name}",
+            domain_name=zone_name,
+            subject_alternative_names=[f"*.{zone_name}"],
             validation=acm.CertificateValidation.from_dns(
                 hosted_zone=self.hosted_zone
             ),
@@ -110,7 +111,8 @@ class B1PrivateHostedZone(Construct):
         self.certificate = acm.Certificate(
             scope=self,
             id="Certificate",
-            domain_name=f"*.{zone_name}",
+            domain_name=zone_name,
+            subject_alternative_names=[f"*.{zone_name}"],
             validation=acm.CertificateValidation.from_email(),
         )
 
