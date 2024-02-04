@@ -27,7 +27,7 @@ class B2PublicHostedZones(Construct):
         self.real_life_iac = B1PublicHostedZone(
             scope=self,
             id="RealLifeIac",
-            zone_name=DomainName.REAL_LIFE_IAC,
+            domain_name=DomainName.REAL_LIFE_IAC,
         )
 
 
@@ -45,11 +45,6 @@ class B2PrivateHostedZones(Construct):
     ) -> None:
         super().__init__(scope, id)
 
-        stage = ssm.StringParameter.value_from_lookup(
-            scope=self,
-            parameter_name="/platform/stage",
-        )
-
         vpc = ec2.Vpc.from_lookup(
             scope=self,
             id="Vpc",
@@ -63,6 +58,6 @@ class B2PrivateHostedZones(Construct):
         B1PrivateHostedZone(
             scope=self,
             id="RealLifeIac",
-            zone_name=f"{stage}.{DomainName.REAL_LIFE_IAC}",
+            domain_name=DomainName.REAL_LIFE_IAC,
             vpc=vpc,
         )

@@ -17,9 +17,11 @@ class B1PublicHostedZone(Construct):
         self,
         scope: Construct,
         id: str,
-        zone_name: str,
+        domain_name: str,
     ) -> None:
         super().__init__(scope, id)
+
+        zone_name = domain_name
 
         self.hosted_zone = route53.PublicHostedZone(
             scope=self,
@@ -55,8 +57,8 @@ class B1PublicHostedZone(Construct):
             scope=self,
             id="HostedZoneName",
             string_value=self.hosted_zone.zone_name,
-            description=f"{zone_name} Public Hosted Zone Name",
-            parameter_name=f"/platform/dns/{zone_name}/public-hosted-zone/name",
+            description=f"{domain_name} Public Hosted Zone Name",
+            parameter_name=f"/platform/dns/{domain_name}/public-hosted-zone/name",
         )
 
         # Create a SSM parameter for the private hosted zone certificate arn
@@ -64,8 +66,8 @@ class B1PublicHostedZone(Construct):
             scope=self,
             id="CertificateArn",
             string_value=self.certificate.certificate_arn,
-            description=f"{zone_name} Public Certificate Arn",
-            parameter_name=f"/platform/dns/{zone_name}/public-hosted-zone/certificate/arn",
+            description=f"{domain_name} Public Certificate Arn",
+            parameter_name=f"/platform/dns/{domain_name}/public-hosted-zone/certificate/arn",
         )
 
 
@@ -81,12 +83,18 @@ class B1PrivateHostedZone(Construct):
         self,
         scope: Construct,
         id: str,
-        zone_name: str,
+        domain_name: str,
         vpc: ec2.IVpc,
         **kwargs,
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
+        stage = ssm.StringParameter.value_from_lookup(
+            scope=self,
+            parameter_name="/platform/stage",
+        )
+
+        zone_name = f"{stage}.{domain_name}"
         # Create the private hosted zone
         self.hosted_zone = route53.HostedZone(
             scope=self,
@@ -111,8 +119,8 @@ class B1PrivateHostedZone(Construct):
             scope=self,
             id="HostedZoneId",
             string_value=self.hosted_zone.hosted_zone_id,
-            description=f"{zone_name} Private Hosted Zone Id",
-            parameter_name=f"/platform/dns/{zone_name}/private-hosted-zone/id",
+            description=f"{domain_name} Private Hosted Zone Id",
+            parameter_name=f"/platform/dns/{domain_name}/private-hosted-zone/id",
         )
 
         # Create a SSM parameter for the private hosted zone name
@@ -120,8 +128,8 @@ class B1PrivateHostedZone(Construct):
             scope=self,
             id="HostedZoneName",
             string_value=self.hosted_zone.zone_name,
-            description=f"{zone_name} Private Hosted Zone Name",
-            parameter_name=f"/platform/dns/{zone_name}/private-hosted-zone/name",
+            description=f"{domain_name} Private Hosted Zone Name",
+            parameter_name=f"/platform/dns/{domain_name}/private-hosted-zone/name",
         )
 
         # Create a SSM parameter for the private hosted zone certificate arn
@@ -129,6 +137,6 @@ class B1PrivateHostedZone(Construct):
             scope=self,
             id="CertificateArn",
             string_value=self.certificate.certificate_arn,
-            description=f"{zone_name} Private Certificate Arn",
-            parameter_name=f"/platform/dns/{zone_name}/private-hosted-zone/certificate/arn",
+            description=f"{domain_name} Private Certificate Arn",
+            parameter_name=f"/platform/dns/{domain_name}/private-hosted-zone/certificate/arn",
         )
