@@ -39,9 +39,7 @@ class B1PublicHostedZone(Construct):
             id="Certificate",
             domain_name=zone_name,
             subject_alternative_names=[f"*.{zone_name}"],
-            validation=acm.CertificateValidation.from_dns(
-                hosted_zone=self.hosted_zone
-            ),
+            validation=acm.CertificateValidation.from_dns(hosted_zone=self.hosted_zone),
         )
 
         # Create a SSM parameter for the private hosted zone id

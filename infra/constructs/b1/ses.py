@@ -41,9 +41,7 @@ class B1EmailService(Construct):
         domain_identity = ses.EmailIdentity(
             scope=self,
             id="DomainIdentity",
-            identity=ses.Identity.public_hosted_zone(
-                hosted_zone=public_hosted_zone
-            ),
+            identity=ses.Identity.public_hosted_zone(hosted_zone=public_hosted_zone),
             configuration_set=configuration_set,
             dkim_identity=ses.DkimIdentity.easy_dkim(
                 signing_key_length=ses.EasyDkimSigningKeyLength.RSA_2048_BIT
@@ -59,9 +57,7 @@ class B1EmailService(Construct):
             email_identity = ses.EmailIdentity(
                 scope=self,
                 id=f"{username}AT{domain_name}EmailIdentity",
-                identity=ses.Identity.email(
-                    email=f"{username}@{domain_name}"
-                ),
+                identity=ses.Identity.email(email=f"{username}@{domain_name}"),
                 configuration_set=configuration_set,
                 dkim_identity=ses.DkimIdentity.easy_dkim(
                     signing_key_length=ses.EasyDkimSigningKeyLength.RSA_2048_BIT
